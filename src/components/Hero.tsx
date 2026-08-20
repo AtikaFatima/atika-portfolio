@@ -1,0 +1,140 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from "framer-motion";
+import { ArrowUpRight, Search } from "lucide-react";
+import { gsap } from "gsap";
+import { SplitText } from "gsap/SplitText";
+import PortraitMedia from "./PortraitMedia";
+import { EASE, INTRO_HANDOFF } from "@/lib/motion";
+
+export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const h1Ref = useRef<HTMLHeadingElement>(null);
+  const headlinePlayed = useRef(false);
+  const [portraitActive, setPortraitActive] = useState(false);
+  const reduce = useReducedMotion();
+  const introDelay = reduce ? 0 : INTRO_HANDOFF;
+
+  useEffect(() => {
+    const heading = h1Ref.current;
+    if (!heading) return;
+    gsap.registerPlugin(SplitText);
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const split = SplitText.create(heading, {
+        type: "lines,chars",
+        mask: "lines",
+        autoSplit: true,
+        onSplit: (self) => {
+          if (headlinePlayed.current) {
+            gsap.set(self.chars, { yPercent: 0 });
+            return;
+          }
+          headlinePlayed.current = true;
+          gsap.from(self.chars, { yPercent: 115, duration: 0.9, ease: "expo.out", stagger: 0.025, delay: INTRO_HANDOFF + 0.35 });
+        },
+      });
+      return () => split.revert();
+    });
+    return () => mm.revert();
+  }, []);
+
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end start"] });
+  const quoteY = useTransform(scrollYProgress, [0, 1], [0, -70]);
+  const portraitY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const commandY = useTransform(scrollYProgress, [0, 1], [0, 70]);
+  const commandRotate = useTransform(scrollYProgress, [0, 1], [-2, 4]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+  const { scrollY } = useScroll();
+  const velocity = useVelocity(scrollY);
+  const skewTarget = useTransform(velocity, [-1500, 1500], [4, -4], { clamp: true });
+  const skewX = useSpring(skewTarget, { stiffness: 300, damping: 40 });
+
+  return (
+    <section ref={sectionRef} id="top" className="relative isolate w-full overflow-hidden pt-24 lg:pt-28">
+      <motion.div style={{ opacity: heroOpacity }} className="relative mx-auto max-w-[1600px] px-6 lg:px-10">
+        <div className="relative flex min-h-[80vh] items-center justify-center lg:min-h-[84vh]">
+          <motion.div style={{ y: quoteY }} className="pointer-events-none absolute inset-x-[2%] top-[6%] z-30 flex justify-center lg:inset-x-[5%] lg:top-[5%]">
+            <motion.p
+              aria-hidden={!portraitActive}
+              initial={false}
+              animate={portraitActive ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 24, scale: 0.94 }}
+              transition={{ duration: reduce ? 0 : 0.65, ease: EASE }}
+              className="max-w-[1200px] text-center font-serif text-[clamp(28px,4.8vw,76px)] italic leading-[1.02] tracking-[-0.025em] text-ink"
+            >
+              Every data point reflects a life, and every life carries a story worth protecting.
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 1.1, delay: introDelay + 0.1, ease: EASE }}
+            style={{ y: portraitY }}
+            className="relative z-10 mt-28 aspect-[1.05/1] w-[min(88vw,700px)] lg:mt-32"
+          >
+            <motion.div
+              className="relative h-full w-full cursor-pointer outline-none focus-visible:rounded-[2rem] focus-visible:ring-2 focus-visible:ring-ink/50 focus-visible:ring-offset-4 focus-visible:ring-offset-cream"
+              tabIndex={0}
+              role="button"
+              aria-label="Reveal Atika's perspective on healthcare data"
+              aria-expanded={portraitActive}
+              animate={{ y: portraitActive ? 42 : 0, scale: portraitActive ? 0.985 : 1 }}
+              transition={{ duration: reduce ? 0 : 0.65, ease: EASE }}
+              onPointerEnter={(event) => { if (event.pointerType !== "touch") setPortraitActive(true); }}
+              onPointerLeave={(event) => { if (event.pointerType !== "touch") setPortraitActive(false); }}
+              onPointerUp={(event) => { if (event.pointerType === "touch") setPortraitActive((active) => !active); }}
+              onFocus={() => setPortraitActive(true)}
+              onBlur={() => setPortraitActive(false)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setPortraitActive((active) => !active);
+                }
+              }}
+            >
+              <PortraitMedia progress={scrollYProgress} />
+            </motion.div>
+            <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: introDelay + 0.95, ease: EASE }} className="absolute -right-[18%] top-[18%] z-20 hidden lg:block">
+              <p className="max-w-[240px] rounded-2xl border border-white/45 bg-white/40 px-4 py-3 text-left text-[13px] leading-relaxed text-ink/85 shadow-[0_10px_28px_-10px_rgba(20,17,14,0.25),inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/12 dark:bg-white/[0.05]">
+                <span className="block pb-1 text-[11px] font-medium uppercase tracking-[0.18em] text-ink/45">here&apos;s what I do</span>
+                Health informatics professional with experience in <span className="font-semibold">EHR systems</span>, <span className="font-semibold">health information management</span>, regulatory compliance, healthcare operations, and clinical research, with hands-on skills in Excel and SQL.
+              </p>
+            </motion.div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 28, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.8, delay: introDelay + 1.05, ease: EASE }} style={{ y: commandY, rotate: commandRotate }} className="absolute bottom-[20%] left-[3%] z-30 hidden w-[min(34vw,400px)] lg:block">
+            <div className="overflow-hidden rounded-3xl border border-white/45 bg-white/45 shadow-[0_24px_70px_-34px_rgba(20,17,14,0.6),inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/12 dark:bg-white/[0.05]">
+              <div className="flex items-center gap-3 border-b border-ink/10 px-4 py-3">
+                <Search className="size-4 text-ink/55" strokeWidth={1.8} />
+                <span className="truncate text-[13px] text-ink/60">Explore healthcare data, research, and health AI</span>
+                <span className="ml-auto rounded-md border border-ink/10 px-1.5 py-0.5 text-[10px] font-medium text-ink/45">K</span>
+              </div>
+              <div className="grid grid-cols-3 divide-x divide-ink/10">
+                {["Healthcare data", "Health AI", "EHR workflows"].map((item, i) => (
+                  <motion.a key={item} href={i === 0 ? "#work" : i === 1 ? "#services" : "#contact"} whileHover={{ y: -3 }} transition={{ duration: 0.35, ease: EASE }} className="group flex items-center justify-between gap-2 px-4 py-3 text-[12px] font-medium text-ink/70 hover:text-ink">
+                    {item}<ArrowUpRight className="size-3.5 opacity-45 transition-transform group-hover:-translate-y-px group-hover:translate-x-px group-hover:opacity-100" strokeWidth={1.8} />
+                  </motion.a>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="headline-row relative z-30 -mt-[2vw] flex flex-col gap-3 pb-10 lg:flex-row lg:flex-nowrap lg:items-end lg:justify-between lg:gap-x-6 lg:pb-16">
+          <motion.div style={{ skewX: reduce ? 0 : skewX }}>
+            <h1 ref={h1Ref} className="headline-name whitespace-nowrap font-display uppercase leading-[0.86] tracking-[-0.025em] text-ink">I AM<br />ATIKA</h1>
+          </motion.div>
+          <motion.h2 initial={reduce ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: introDelay + 0.75, ease: EASE }} className="headline-role whitespace-nowrap font-display uppercase leading-[0.95] tracking-tight text-ink lg:mb-[0.4vw] lg:text-right">
+            HEALTH INFORMATICS /<br />HEALTHCARE DATA
+          </motion.h2>
+        </div>
+
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: introDelay + 0.7, ease: EASE }} className="relative z-30 flex flex-col gap-5 pb-12 lg:hidden">
+          <p className="max-w-xl text-[14px] leading-relaxed text-ink/80">Health informatics professional with experience in EHR systems, health information management, regulatory compliance, healthcare operations, and clinical research. Skilled in Excel and SQL, with a clinical background that keeps the person behind every record in focus.</p>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}

@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* Light-only presentation. The app never sets this attribute, so legacy dark
+   utility variants remain inert on every device. */
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  /* Light palette — neutral cream + lavender lilac that complements the
+     lavender turban + black polo. Less warm/orange than v1. */
+  --color-cream: #f6f1ea;
+  --color-cream-deep: #ece3d6;
+  --color-peach: #efd6df;
+  --color-peach-deep: #d89aae;
+  --color-lilac-mist: #e0d2e2;
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #2a2520;
+
+  /* fonts: next/font sets --font-*-loaded on <html>; we alias for utilities */
+  --font-sans: var(--font-sans-loaded), system-ui, sans-serif;
+  --font-serif: var(--font-serif-loaded), "Times New Roman", serif;
+  --font-display: var(--font-display-loaded), "Arial Black", sans-serif;
+}
+
+@layer base {
+  /* Dark palette — warm cocoa with lilac/plum accents matching the turban. */
+  /* No native scroll-behavior: smooth here — Lenis owns scrolling, and the
+     two inertia models fight on anchor jumps. SmoothScroll.tsx intercepts
+     anchor clicks and flies there with lenis.scrollTo instead. */
+  html {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  body {
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-cream);
+  }
+}
+
+.kinetic-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-ink) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink) 18%, transparent) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 68%);
+}
+
+/* GitHub heatmap scroll-reveal. Each colored cell carries its own
+   --threshold (column position 0..1). The parent SVG carries --gh-reveal,
+   updated via Framer Motion as the card scrolls into view. The cell's
+   opacity ramps from 0 to 1 once --gh-reveal crosses the threshold,
+   giving a left-to-right wave fill. */
+.gh-reveal-cell {
+  /* Distance from the wave front: negative = not yet reached, positive = past. */
+  --d: calc(var(--gh-reveal, 0) - var(--threshold, 0));
+  /* rise: 0 → 1 as the wave reaches this cell (0.05 of progress). */
+  --rise: clamp(0, calc((var(--d) + 0.05) * 20), 1);
+  /* fall: 0 → 1 over the next 0.1 of progress, settling the pop. */
+  --fall: clamp(0, calc(var(--d) * 10), 1);
+  opacity: var(--rise);
+  transform: scale(calc(var(--rise) * (1.3 - 0.3 * var(--fall))));
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-reveal-cell {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Theme wipe — a circular View Transition that grows from the theme slider
+   (bottom center of the viewport). The dormant selector is retained only for
+   only for the duration of the toggle, so other view transitions (if any)
+   stay untouched. Browsers without the API just get the old crossfade. */
+html.theme-wipe::view-transition-old(root),
+html.theme-wipe::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+html.theme-wipe::view-transition-new(root) {
+  /* Slow, deliberate bloom rather than a snap. The curve is deliberately close
+     to linear: ~4% along at 100ms (so the click still feels answered), 56% at
+     the halfway point, and it eases only into the final corners. A circle's
+     area grows as r^2, so a near-linear radius already reads as decelerating —
+     a strong ease-out on top of that spends most of the runtime invisible. */
+  animation: theme-wipe-in 1.3s cubic-bezier(0.25, 0, 0.63, 1) both;
+}
+
+@keyframes theme-wipe-in {
+  from {
+    clip-path: circle(0px at var(--theme-origin-x) var(--theme-origin-y));
+  }
+  to {
+    /* Exact reach: the farthest pixel from the slider is a top corner, at
+       hypot(50vw, 100vh - 56px) — correct at every aspect ratio. The old
+       circle(150%) resolved against the viewport diagonal, which is ~1.6x
+       further than needed on a laptop, so a third of the runtime was spent
+       growing past the edge of the screen where nobody can see it. That is
+       what made the wipe feel like it ended early. 1.01 is the anti-aliasing
+       margin; the circle now reaches the last corner at ~94% of the runtime
+       instead of ~62%. */
+    clip-path: circle(var(--theme-radius) at var(--theme-origin-x) var(--theme-origin-y));
+  }
+}
+
+/* The html/body background transitions would double-animate beneath the
+   wipe; freeze them while the view transition runs. */
+html.theme-wipe,
+html.theme-wipe body {
+  transition: none;
+}
+
+/* ── Bottom-row headline fit ──────────────────────────────────────────────
+   "I AM / ATIKA" and "HEALTH INFORMATICS / HEALTHCARE DATA" are both
+   Archivo Black set on nowrap single lines, so each line's rendered width is
+   a fixed multiple of its font size. Measured with the real tracking:
+     "ATIKA"               ~3.8em
+     "HEALTH INFORMATICS"  ~12.7em
+   The previous fixed pair (9.5vw name / 3vw role) needed 1701px of row at a
+   1710px viewport but only had 1520px, so the role line was clipped by the
+   section's overflow-hidden at every desktop width. Deriving BOTH sizes from
+   one shared row budget makes overflow arithmetically impossible.
+   cqw, not vw, so container padding and any classic scrollbar are excluded. */
+.headline-row {
+  container-type: inline-size;
+  /* stacked (mobile): each line owns the full row */
+  --fit-budget: calc(100cqw * 0.97);
+  --name-size: min(150px, calc(var(--fit-budget) / 3.8));
+  --role-size: min(40px, calc(var(--fit-budget) / 12.7));
+}
+
+@media (min-width: 1024px) {
+  .headline-row {
+    /* side by side: the two share the row, minus the gap-x-6 between them.
+       0.68 is the name's share — raise it for a bigger name and a smaller
+       role line, lower it for the reverse. The role line takes the rest. */
+    --fit-budget: calc((100cqw - 1.5rem) * 0.97);
+    --name-size: min(150px, calc(var(--fit-budget) * 0.45 / 3.8));
+    --role-size: min(48px, calc((var(--fit-budget) - 3.8 * var(--name-size)) / 12.7));
+  }
+}
+
+.headline-name {
+  font-size: var(--name-size);
+}
+
+.headline-role {
+  font-size: var(--role-size);
+}
