@@ -113,7 +113,7 @@ export default function Contact() {
         </motion.div>
 
         <div className="mt-24 flex flex-col gap-2 border-t border-ink/15 pt-8 text-[12px] text-ink/55 md:flex-row md:items-center md:justify-between">
-          <span>© {new Date().getFullYear()} Atika Fatima.</span>
+          <span>© {new Date().getFullYear()} Atika Fatima</span>
           <span className="font-serif italic">Health informatics with a clinical perspective.</span>
         </div>
       </div>
@@ -218,7 +218,7 @@ function ContactForm() {
               ? errorMsg
               : status === "sending"
                 ? "Sending…"
-                : "I'll reply within a couple of days."}
+                : ""}
         </span>
         <button
           type="submit"

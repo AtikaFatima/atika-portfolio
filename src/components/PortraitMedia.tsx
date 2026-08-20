@@ -33,7 +33,7 @@ const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 // };
 
 const MEDIA_CLASS =
-  "object-contain object-bottom drop-shadow-[0_30px_60px_rgba(20,17,14,0.18)] dark:drop-shadow-[0_30px_60px_rgba(0,0,0,0.5)]";
+  "rounded-[2rem] object-cover object-center shadow-[0_30px_60px_rgba(20,17,14,0.18)] dark:shadow-[0_30px_60px_rgba(0,0,0,0.5)]";
 
 export default function PortraitMedia({
   progress,
@@ -55,7 +55,7 @@ export default function PortraitMedia({
   if (reduce || !HERO_CLIP) {
     return (
       <Image
-        src={`${BASE_PATH}${HERO_CLIP?.poster ?? "/atika-hero-transparent.png"}`}
+        src={`${BASE_PATH}${HERO_CLIP?.poster ?? "/atika-hero-photo.png"}`}
         alt="Atika Fatima"
         fill
         priority

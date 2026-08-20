@@ -61,7 +61,7 @@ export default function Nav() {
           href="#top"
           className="font-serif text-2xl italic tracking-tight text-ink lg:text-3xl"
         >
-          Atika Fatima.
+          Atika Fatima
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex" aria-label="Primary">

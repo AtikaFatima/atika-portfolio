@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { EASE, EASE_IN_OUT, INTRO_HANDOFF } from "@/lib/motion";
 
-const WORDMARK = "Atika Fatima.";
+const WORDMARK = "Atika Fatima";
 
 /** First-load intro overlay. Server-rendered visible on purpose: it covers the
  *  page before hydration so nothing flashes underneath. The wordmark rises

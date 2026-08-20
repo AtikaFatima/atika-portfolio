@@ -122,12 +122,14 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <div className="headline-row relative z-30 -mt-[2vw] flex flex-col gap-3 pb-10 lg:flex-row lg:flex-nowrap lg:items-end lg:justify-between lg:gap-x-6 lg:pb-16">
+        <div className="headline-row relative z-30 mt-10 flex flex-col gap-4 pb-10 lg:mt-16 lg:gap-6 lg:pb-16">
           <motion.div style={{ skewX: reduce ? 0 : skewX }}>
-            <h1 ref={h1Ref} className="headline-name whitespace-nowrap font-display uppercase leading-[0.86] tracking-[-0.025em] text-ink">I AM<br />ATIKA</h1>
+            <h1 ref={h1Ref} className="headline-name max-w-[1400px] font-display leading-[0.9] tracking-[-0.035em] text-ink">
+              Hi, I’m Atika Fatima
+            </h1>
           </motion.div>
-          <motion.h2 initial={reduce ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: introDelay + 0.75, ease: EASE }} className="headline-role whitespace-nowrap font-display uppercase leading-[0.95] tracking-tight text-ink lg:mb-[0.4vw] lg:text-right">
-            HEALTH INFORMATICS /<br />HEALTHCARE DATA
+          <motion.h2 initial={reduce ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: introDelay + 0.75, ease: EASE }} className="headline-role max-w-[1100px] font-display leading-[1.05] tracking-tight text-ink">
+            Health Informatics professional transforming healthcare data into meaningful insights
           </motion.h2>
         </div>
 

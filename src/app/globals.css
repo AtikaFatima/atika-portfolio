@@ -120,40 +120,11 @@ html.theme-wipe body {
   transition: none;
 }
 
-/* ── Bottom-row headline fit ──────────────────────────────────────────────
-   "I AM / ATIKA" and "HEALTH INFORMATICS / HEALTHCARE DATA" are both
-   Archivo Black set on nowrap single lines, so each line's rendered width is
-   a fixed multiple of its font size. Measured with the real tracking:
-     "ATIKA"               ~3.8em
-     "HEALTH INFORMATICS"  ~12.7em
-   The previous fixed pair (9.5vw name / 3vw role) needed 1701px of row at a
-   1710px viewport but only had 1520px, so the role line was clipped by the
-   section's overflow-hidden at every desktop width. Deriving BOTH sizes from
-   one shared row budget makes overflow arithmetically impossible.
-   cqw, not vw, so container padding and any classic scrollbar are excluded. */
-.headline-row {
-  container-type: inline-size;
-  /* stacked (mobile): each line owns the full row */
-  --fit-budget: calc(100cqw * 0.97);
-  --name-size: min(150px, calc(var(--fit-budget) / 3.8));
-  --role-size: min(40px, calc(var(--fit-budget) / 12.7));
-}
-
-@media (min-width: 1024px) {
-  .headline-row {
-    /* side by side: the two share the row, minus the gap-x-6 between them.
-       0.68 is the name's share — raise it for a bigger name and a smaller
-       role line, lower it for the reverse. The role line takes the rest. */
-    --fit-budget: calc((100cqw - 1.5rem) * 0.97);
-    --name-size: min(150px, calc(var(--fit-budget) * 0.45 / 3.8));
-    --role-size: min(48px, calc((var(--fit-budget) - 3.8 * var(--name-size)) / 12.7));
-  }
-}
-
+/* Responsive hero type keeps the longer introduction readable at every size. */
 .headline-name {
-  font-size: var(--name-size);
+  font-size: clamp(42px, 7vw, 112px);
 }
 
 .headline-role {
-  font-size: var(--role-size);
+  font-size: clamp(22px, 3vw, 48px);
 }
