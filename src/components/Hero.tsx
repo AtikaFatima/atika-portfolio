@@ -98,7 +98,7 @@ export default function Hero() {
               </motion.div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: introDelay + 0.95, ease: EASE }} className="relative z-20 hidden min-w-0 self-start pl-2 pt-[28%] lg:block xl:pl-4">
+            <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: introDelay + 0.95, ease: EASE }} className="relative z-20 mt-28 hidden min-w-0 self-start pl-2 lg:mt-32 lg:block xl:pl-4">
               <p className="max-w-[320px] rounded-2xl border border-white/45 bg-white/40 px-4 py-3 text-left text-[13px] leading-relaxed text-ink/85 shadow-[0_10px_28px_-10px_rgba(20,17,14,0.25),inset_0_1px_0_rgba(255,255,255,0.6)] backdrop-blur-xl backdrop-saturate-150 dark:border-white/12 dark:bg-white/[0.05]">
                 <span className="block pb-1 text-[11px] font-medium uppercase tracking-[0.18em] text-ink/45">here&apos;s what I do</span>
                 I work at the intersection of healthcare, data, and technology, combining my clinical background with expertise in health informatics, clinical research, and healthcare analytics. I have hands-on skills in SQL, Python, and EHR systems, along with experience using Excel, MATLAB, machine learning, and data visualization to analyze clinical data, improve data quality and workflows, and support better healthcare decisions. I also bring experience in HIPAA compliance, clinical data management, predictive modeling, and healthcare operations, allowing me to turn complex healthcare information into meaningful and actionable insights.
