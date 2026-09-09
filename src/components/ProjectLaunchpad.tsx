@@ -52,6 +52,7 @@ export default function ProjectLaunchpad() {
                   <div className="mt-5 flex flex-wrap gap-1.5 border-t border-ink/10 pt-4">
                     {project.tech.map((tech) => <span key={tech} className="rounded-full border border-ink/15 px-2.5 py-0.5 text-[10px] font-medium text-ink/65">{tech}</span>)}
                   </div>
+                  {project.authors ? <p className="mt-4 text-[11px] leading-relaxed text-ink/55">{project.authors}</p> : null}
                 </div>
               </motion.article>
             );

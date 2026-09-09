@@ -5,6 +5,7 @@ export type Project = {
   description: string;
   highlights: string[];
   tech: string[];
+  authors?: string;
   href?: string;
   github?: string;
   status: "shipped" | "live" | "soon" | "current";
@@ -26,6 +27,7 @@ export const projects: Project[] = [
     description: "A machine-learning system built from MIMIC-III ICU waveform data to identify early patient deterioration and provide interpretable clinical signals.",
     highlights: ["86.4% model accuracy", "91% precision", "Explainable AI for clinical interpretation"],
     tech: ["MIMIC-III", "Machine Learning", "Explainable AI"],
+    authors: "Author: Kimberly Rivera; CoAuthors: Atika Fatima, Zane Ali, Sarfaraz, Hiba Sheik",
     status: "shipped", accent: "#9B2C5B", bgFrom: "#f4d9e4", bgTo: "#dca4b9", platform: "web", icon: "",
   },
   {
